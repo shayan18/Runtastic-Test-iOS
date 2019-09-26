@@ -10,13 +10,35 @@ import XCTest
 @testable import RuntasticTest
 
 class RuntasticTestTests: XCTestCase {
+    var promise = XCTestExpectation()
+    var groupViewModel = GroupViewModel()
 
     override func setUp() {
+        APItest()
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        super.tearDown()
+    }
+    
+    func APItest() {
+        promise = expectation(description: "error")
+        groupViewModel.getGroups { [weak self] (result) in
+            switch result {
+            case.success(let groupResponse):
+                if groupResponse.groups!.count > 0 {
+                    self?.promise.fulfill()
+
+                }
+            case .failure(let error):
+                XCTFail("error")
+
+            }
+        }
+        waitForExpectations(timeout: 5, handler: nil)
+
+
     }
 
     func testExample() {
